@@ -122,7 +122,7 @@ chart3 = alt.Chart(df).mark_bar().encode(
 dfesg = df[['Ticker', 'Name', 'Environmental', 'Social', 'Governance']].copy()
 
 domain = ['Environmental', 'Social', 'Governance']
-range_ = ['seagreen', 'firebrick', 'rebeccapurple']
+range_ = ['17becf', '#e7969c', '#ffed6f']
 
 chart4 = alt.Chart(dfesg,title=dfesg['Name'][0]).transform_fold(
     ['Environmental', 'Social', 'Governance'],
