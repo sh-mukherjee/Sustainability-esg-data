@@ -129,13 +129,11 @@ chart4 = alt.Chart(dfesg,title=dfesg['Name'][0]).transform_fold(
     as_=['Attribute', 'Scores']).mark_bar().encode(
     alt.Y('Ticker:N'),
     alt.X('Scores:Q'),
-    color='Attribute:N',
+    color=alt.Color('Attribute:N').scale(domain=domain, range=range_),
     tooltip = [alt.Tooltip('Name:N'),
                alt.Tooltip('Attribute:N'),
                alt.Tooltip('Scores:Q')
               ]
-    ).interactive()
-
-#alt.vconcat(chart4, chart1, chart2, chart3)
+    )
 
 st.altair_chart(alt.vconcat(chart4, chart1, chart2, chart3), use_container_width=True)
