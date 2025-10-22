@@ -95,7 +95,7 @@ chart1 = alt.Chart(df).mark_bar().encode(
     tooltip = [alt.Tooltip('Name:N'),
                alt.Tooltip('Total ESG:Q')
               ]
-).interactive()
+)
 
 chart2 = alt.Chart(df).mark_bar().encode(
     alt.X('Percentile:Q',
@@ -106,7 +106,7 @@ chart2 = alt.Chart(df).mark_bar().encode(
     tooltip = [alt.Tooltip('Name:N'),
                alt.Tooltip('Percentile:Q')
               ]
-).interactive()
+)
 
 chart3 = alt.Chart(df).mark_bar().encode(
     alt.Y('Ticker:N'),
@@ -117,12 +117,12 @@ chart3 = alt.Chart(df).mark_bar().encode(
     tooltip = [alt.Tooltip('Name:N'),
                alt.Tooltip('Controversy Level:Q')
               ]
-).interactive()
+)
 
 dfesg = df[['Ticker', 'Name', 'Environmental', 'Social', 'Governance']].copy()
 
 domain = ['Environmental', 'Social', 'Governance']
-range_ = ['17becf', '#e7969c', '#ffed6f']
+range_ = ['#17becf', '#e7969c', '#ffed6f']
 
 chart4 = alt.Chart(dfesg,title=dfesg['Name'][0]).transform_fold(
     ['Environmental', 'Social', 'Governance'],
