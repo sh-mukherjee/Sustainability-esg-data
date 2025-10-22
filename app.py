@@ -43,7 +43,7 @@ jpnstocks = dfjapan['Ticker']
 usastocks = dfusa['Ticker']
 
 #We will define functions to obtain the environmental, social, governance and total ESG scores of a stock from its ticker
-
+"""
 def env(ticker):
     if yf.Ticker(ticker).sustainability is not None:
         return yf.Ticker(ticker).sustainability.loc['environmentScore','Value']
@@ -84,13 +84,48 @@ def contro(ticker):
 
 def scores(ticker):
     return pd.DataFrame([[ticker,yf.Ticker(ticker).info['longName'],env(ticker),social(ticker),gov(ticker),total(ticker),percentile(ticker),contro(ticker)]],columns=['Ticker','Name','Environmental','Social','Governance','Total ESG','Percentile','Controversy Level'])
+"""
+
+def get_esg_data(ticker):
+    """
+    Fetch Sustainalytics ESG data for a given ticker via yfinance.
+    Returns a pandas DataFrame (1 row) with the desired fields or NaNs if unavailable.
+    """
+    t = yf.Ticker(ticker)
+    esg = t.sustainability
+    info = t.info  # contains 'longName', etc.
+
+    def get_value(field):
+        if esg is not None and field in esg.index:
+            if 'Value' in esg.columns:
+                return esg.loc[field, 'Value']
+            else:
+                return esg.loc[field].iloc[0]
+        return np.nan
+
+    data = {
+        'Ticker': ticker,
+        'Name': info.get('longName', np.nan),
+        'Peer Group': get_value('peerGroup'),
+        'Environmental': get_value('environmentScore'),
+        'Social': get_value('socialScore'),
+        'Governance': get_value('governanceScore'),
+        'Total ESG': get_value('totalEsg'),
+        'Percentile': get_value('percentile'),
+        'Controversy Level': get_value('highestControversy'),
+    }
+
+    return pd.DataFrame([data])  # wrap dict in list → one-row DataFrame
+
+
+
 
 # We will display the dataframe containing the ESG scores
 
 #tkr = 'MSFT'
 st.title('Sustainalytics ESG Risk Scores')
 st.sidebar.title('Choose Stock Market')
-market = st.sidebar.selectbox('Country',['UK','Japan','Australia','USA'])
+market = st.sidebar.selectbox('Country',['UK','Japan','USA'])
 
 # Define a function to choose the appropriate list of tickers according to the country chosen above
 def stocklist(country):
@@ -104,7 +139,7 @@ def stocklist(country):
         return usastocks
 
 tkr = st.sidebar.selectbox('Select the ticker:', stocklist(market))
-df = scores(tkr)
+df = get_esg_data(tkr)
 #display(HTML(df.to_html()))
 
 chart1 = alt.Chart(df).mark_bar().encode(
