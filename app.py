@@ -4,6 +4,7 @@ import altair as alt
 import yfinance as yf
 import streamlit as st
 #from IPython.display import display, HTML
+st.set_page_config(layout="wide")
 
 #FTSE 100 holdings (United Kingdom)
 
@@ -58,7 +59,6 @@ def get_esg_data(ticker):
         'Social': get_value('socialScore'),
         'Governance': get_value('governanceScore'),
         'Total ESG': get_value('totalEsg'),
-        'Percentile': get_value('percentile'),
         'Controversy Level': get_value('highestControversy'),
     }
 
@@ -95,18 +95,7 @@ chart1 = alt.Chart(df).mark_bar().encode(
     tooltip = [alt.Tooltip('Name:N'),
                alt.Tooltip('Total ESG:Q')
               ]
-)
-
-chart2 = alt.Chart(df).mark_bar().encode(
-    alt.X('Percentile:Q',
-        scale=alt.Scale(domain=(0,100))
-    ),
-    alt.Y('Ticker:N'),
-    color=alt.Color('Percentile:Q', scale=alt.Scale(domain = (0,100), scheme='yellowgreenblue')),
-    tooltip = [alt.Tooltip('Name:N'),
-               alt.Tooltip('Percentile:Q')
-              ]
-)
+).properties(width='container')
 
 chart3 = alt.Chart(df).mark_bar().encode(
     alt.Y('Ticker:N'),
@@ -117,7 +106,7 @@ chart3 = alt.Chart(df).mark_bar().encode(
     tooltip = [alt.Tooltip('Name:N'),
                alt.Tooltip('Controversy Level:Q')
               ]
-)
+).properties(width='container')
 
 dfesg = df[['Ticker', 'Name', 'Environmental', 'Social', 'Governance']].copy()
 
@@ -134,6 +123,6 @@ chart4 = alt.Chart(dfesg,title=dfesg['Name'][0]).transform_fold(
                alt.Tooltip('Attribute:N'),
                alt.Tooltip('Scores:Q')
               ]
-    )
+    ).properties(width='container')
 
-st.altair_chart(alt.vconcat(chart4, chart1, chart2, chart3), use_container_width=True)
+st.altair_chart(alt.vconcat(chart4, chart1, chart3)) #, use_container_width=True)
