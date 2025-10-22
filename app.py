@@ -15,6 +15,7 @@ import streamlit as st
 #FTSE 100 holdings (United Kingdom)
 #dfuk = pd.read_excel('https://topforeignstocks.com/wp-content/uploads/2021/01/UK-FTSE-100-Index-Constituents-List-Jan-2021-New.xlsx', engine='openpyxl')
 dfuk = pd.read_csv('https://topforeignstocks.com/wp-content/uploads/2025/01/Complete-List-of-UK-FTSE-100-Index-Constituents-Jan-7-2025.csv')
+dfuk = dfuk.rename(columns={'Ticker (on LSE)': 'Ticker'})
 
 #ASX holdings (Australia)
 #dfaus = pd.read_excel('https://topforeignstocks.com/wp-content/uploads/2021/01/Australia-ASX-200-Index-Constituents-List-Jan-2021.xlsx', engine='openpyxl')
@@ -23,6 +24,7 @@ dfuk = pd.read_csv('https://topforeignstocks.com/wp-content/uploads/2025/01/Comp
 #Nikkei 225 holdings (Japan)
 #dfjapan = pd.read_excel('https://topforeignstocks.com/wp-content/uploads/2020/01/Complete-List-of-Constituents-of-Nikkei-225-Jan-2020-Original.xlsx', engine='openpyxl')
 dfjapan = pd.read_csv('https://topforeignstocks.com/wp-content/uploads/2024/01/Complete-List-of-Japan-Nikkei-225-Index-Constituents-Jan-1-2024.csv')
+dfjapan = dfjapan.rename(columns={'Code': 'Ticker'})
 
 #NASDAQ 100  (United States of America)
 #dfusa = pd.read_excel('https://topforeignstocks.com/wp-content/uploads/2021/01/SP-500-Index-Constituents-List-Jan-1-2021.xlsx', engine='openpyxl')
