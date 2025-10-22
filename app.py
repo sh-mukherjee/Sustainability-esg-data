@@ -13,27 +13,31 @@ import streamlit as st
 #from IPython.display import display, HTML
 
 #FTSE 100 holdings (United Kingdom)
-dfuk = pd.read_excel('https://topforeignstocks.com/wp-content/uploads/2021/01/UK-FTSE-100-Index-Constituents-List-Jan-2021-New.xlsx', engine='openpyxl')
+#dfuk = pd.read_excel('https://topforeignstocks.com/wp-content/uploads/2021/01/UK-FTSE-100-Index-Constituents-List-Jan-2021-New.xlsx', engine='openpyxl')
+dfuk = pd.read_csv('https://topforeignstocks.com/wp-content/uploads/2025/01/Complete-List-of-UK-FTSE-100-Index-Constituents-Jan-7-2025.csv')
 
 #ASX holdings (Australia)
-dfaus = pd.read_excel('https://topforeignstocks.com/wp-content/uploads/2021/01/Australia-ASX-200-Index-Constituents-List-Jan-2021.xlsx', engine='openpyxl')
+#dfaus = pd.read_excel('https://topforeignstocks.com/wp-content/uploads/2021/01/Australia-ASX-200-Index-Constituents-List-Jan-2021.xlsx', engine='openpyxl')
+#dfaus = pd.read_excel('https://topforeignstocks.com/wp-content/uploads/2022/01/Complete-List-of-Australia-ASX-200-Index-Constituents-Jan-23-2022.xlsx')
 
 #Nikkei 225 holdings (Japan)
-dfjapan = pd.read_excel('https://topforeignstocks.com/wp-content/uploads/2020/01/Complete-List-of-Constituents-of-Nikkei-225-Jan-2020-Original.xlsx', engine='openpyxl')
+#dfjapan = pd.read_excel('https://topforeignstocks.com/wp-content/uploads/2020/01/Complete-List-of-Constituents-of-Nikkei-225-Jan-2020-Original.xlsx', engine='openpyxl')
+dfjapan = pd.read_csv('https://topforeignstocks.com/wp-content/uploads/2024/01/Complete-List-of-Japan-Nikkei-225-Index-Constituents-Jan-1-2024.csv')
 
-#S&P 500  (United States of America)
-dfusa = pd.read_excel('https://topforeignstocks.com/wp-content/uploads/2021/01/SP-500-Index-Constituents-List-Jan-1-2021.xlsx', engine='openpyxl')
+#NASDAQ 100  (United States of America)
+#dfusa = pd.read_excel('https://topforeignstocks.com/wp-content/uploads/2021/01/SP-500-Index-Constituents-List-Jan-1-2021.xlsx', engine='openpyxl')
+dfusa = pd.read_csv('https://topforeignstocks.com/wp-content/uploads/2025/01/Complete-List-of-NASDAQ-100-Constituents-Jan-4-2025.csv')
 
 #To allow Yahoo Finance to find the tickers, we need to modify the ticker codes in the UK, Germany, Japan and Australia dataframes.
 #UK tickers need to have '.L', Japan tickers need to have '.T', and Australia tickers need to have '.AX' added at the end.
 
 dfuk['Ticker'] = dfuk['Ticker'].astype(str) + '.L'
 dfjapan['Ticker'] = dfjapan['Ticker'].astype(str) + '.T'
-dfaus['Ticker'] = dfaus['Ticker'].astype(str) + '.AX'
+#dfaus['Ticker'] = dfaus['Ticker'].astype(str) + '.AX'
 
 ukstocks = dfuk['Ticker']
 jpnstocks = dfjapan['Ticker']
-ausstocks = dfaus['Ticker']
+#ausstocks = dfaus['Ticker']
 usastocks = dfusa['Ticker']
 
 #We will define functions to obtain the environmental, social, governance and total ESG scores of a stock from its ticker
