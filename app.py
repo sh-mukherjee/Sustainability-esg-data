@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Spyder Editor
-
-This is a temporary script file.
-"""
-
 import pandas as pd
 import numpy as np
 import altair as alt
@@ -43,49 +36,8 @@ jpnstocks = dfjapan['Ticker']
 usastocks = dfusa['Ticker']
 
 #We will define functions to obtain the environmental, social, governance and total ESG scores of a stock from its ticker
-"""
-def env(ticker):
-    if yf.Ticker(ticker).sustainability is not None:
-        return yf.Ticker(ticker).sustainability.loc['environmentScore','Value']
-    else:
-        return np.NaN
 
-def social(ticker):
-    if yf.Ticker(ticker).sustainability is not None:
-        return yf.Ticker(ticker).sustainability.loc['socialScore','Value']
-    else:
-        return np.NaN
-
-def gov(ticker):
-    if yf.Ticker(ticker).sustainability is not None:
-        return yf.Ticker(ticker).sustainability.loc['governanceScore','Value']
-    else:
-        return np.NaN
-    
-def total(ticker):
-    if yf.Ticker(ticker).sustainability is not None:
-        return yf.Ticker(ticker).sustainability.loc['totalEsg','Value']
-    else:
-        return np.NaN
-
-def percentile(ticker):
-    if yf.Ticker(ticker).sustainability is not None:
-        return yf.Ticker(ticker).sustainability.loc['percentile', 'Value']
-    else:
-        return np.Nan    
-
-def contro(ticker):
-    if yf.Ticker(ticker).sustainability is not None:
-        return yf.Ticker(ticker).sustainability.loc['highestControversy','Value']
-    else:
-        return np.NaN
-    
- # We will define a function that combines these scores into a dataframe
-
-def scores(ticker):
-    return pd.DataFrame([[ticker,yf.Ticker(ticker).info['longName'],env(ticker),social(ticker),gov(ticker),total(ticker),percentile(ticker),contro(ticker)]],columns=['Ticker','Name','Environmental','Social','Governance','Total ESG','Percentile','Controversy Level'])
-"""
-
+@st.cache
 def get_esg_data(ticker):
     """
     Fetch Sustainalytics ESG data for a given ticker via yfinance.
@@ -122,7 +74,6 @@ def get_esg_data(ticker):
 
 # We will display the dataframe containing the ESG scores
 
-#tkr = 'MSFT'
 st.title('Sustainalytics ESG Risk Scores')
 st.sidebar.title('Choose Stock Market')
 market = st.sidebar.selectbox('Country',['UK','Japan','USA'])
@@ -133,14 +84,12 @@ def stocklist(country):
         return ukstocks
     elif country == 'Japan':
         return jpnstocks
-    elif country == 'Australia':
-        return ausstocks
     else:
         return usastocks
 
 tkr = st.sidebar.selectbox('Select the ticker:', stocklist(market))
 df = get_esg_data(tkr)
-#display(HTML(df.to_html()))
+st.table(df, border=True)
 
 chart1 = alt.Chart(df).mark_bar().encode(
     alt.Y('Ticker:N'),
