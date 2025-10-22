@@ -86,43 +86,66 @@ tkr = st.sidebar.selectbox('Select the ticker:', stocklist(market))
 df = get_esg_data(tkr)
 st.table(df, border=True)
 
-chart1 = alt.Chart(df).mark_bar().encode(
-    alt.Y('Ticker:N'),
-    alt.X('Total ESG:Q',
-        scale=alt.Scale(domain=(0,100))
-    ),
-    color=alt.Color('Total ESG:Q', scale=alt.Scale(domain = (0,100), scheme='yellowgreenblue')),
-    tooltip = [alt.Tooltip('Name:N'),
-               alt.Tooltip('Total ESG:Q')
-              ]
-).properties(width='container')
+@st.cache_data
+def make_esg_charts(df):
+    """Build and return the combined ESG Altair charts."""
+    # --- Chart 1: Total ESG ---
+    chart1 = (
+        alt.Chart(df)
+        .mark_bar()
+        .encode(
+            alt.Y('Ticker:N'),
+            alt.X('Total ESG:Q', scale=alt.Scale(domain=(0, 100))),
+            color=alt.Color('Total ESG:Q', scale=alt.Scale(domain=(0, 100), scheme='yellowgreenblue')),
+            tooltip=[
+                alt.Tooltip('Name:N'),
+                alt.Tooltip('Total ESG:Q'),
+            ],
+        )
+        .properties(width='container', title='Total ESG Score')
+    )
 
-chart3 = alt.Chart(df).mark_bar().encode(
-    alt.Y('Ticker:N'),
-    alt.X('Controversy Level:Q',
-        scale=alt.Scale(domain=(0,5))
-    ),
-    color=alt.Color('Controversy Level:Q', scale=alt.Scale(domain = (0,5), scheme='yellowgreenblue')),
-    tooltip = [alt.Tooltip('Name:N'),
-               alt.Tooltip('Controversy Level:Q')
-              ]
-).properties(width='container')
+    # --- Chart 3: Controversy Level ---
+    chart3 = (
+        alt.Chart(df)
+        .mark_bar()
+        .encode(
+            alt.Y('Ticker:N'),
+            alt.X('Controversy Level:Q', scale=alt.Scale(domain=(0, 5))),
+            color=alt.Color('Controversy Level:Q', scale=alt.Scale(domain=(0, 5), scheme='yellowgreenblue')),
+            tooltip=[
+                alt.Tooltip('Name:N'),
+                alt.Tooltip('Controversy Level:Q'),
+            ],
+        )
+        .properties(width='container', title='Controversy Level')
+    )
 
-dfesg = df[['Ticker', 'Name', 'Environmental', 'Social', 'Governance']].copy()
+    # --- Chart 4: E, S, G breakdown ---
+    dfesg = df[['Ticker', 'Name', 'Environmental', 'Social', 'Governance']].copy()
+    domain = ['Environmental', 'Social', 'Governance']
+    range_ = ['#bd9e39', '#e7969c', '#ffed6f']
 
-domain = ['Environmental', 'Social', 'Governance']
-range_ = ['#bd9e39', '#e7969c', '#ffed6f']
+    chart4 = (
+        alt.Chart(dfesg, title=dfesg['Name'].iloc[0] if not dfesg.empty else "")
+        .transform_fold(['Environmental', 'Social', 'Governance'], as_=['Attribute', 'Scores'])
+        .mark_bar()
+        .encode(
+            alt.Y('Ticker:N'),
+            alt.X('Scores:Q'),
+            color=alt.Color('Attribute:N').scale(domain=domain, range=range_),
+            tooltip=[
+                alt.Tooltip('Name:N'),
+                alt.Tooltip('Attribute:N'),
+                alt.Tooltip('Scores:Q'),
+            ],
+        )
+        .properties(width='container', title='ESG Component Scores')
+    )
 
-chart4 = alt.Chart(dfesg,title=dfesg['Name'][0]).transform_fold(
-    ['Environmental', 'Social', 'Governance'],
-    as_=['Attribute', 'Scores']).mark_bar().encode(
-    alt.Y('Ticker:N'),
-    alt.X('Scores:Q'),
-    color=alt.Color('Attribute:N').scale(domain=domain, range=range_),
-    tooltip = [alt.Tooltip('Name:N'),
-               alt.Tooltip('Attribute:N'),
-               alt.Tooltip('Scores:Q')
-              ]
-    ).properties(width='container')
+    # Combine charts vertically
+    return alt.vconcat(chart4, chart1, chart3).resolve_scale(x='independent')
 
-st.altair_chart(alt.vconcat(chart4, chart1, chart3)) #, use_container_width=True)
+# === Usage in Streamlit ===
+combined_chart = make_esg_charts(df)
+st.altair_chart(combined_chart, use_container_width=True)
